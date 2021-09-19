@@ -1,32 +1,30 @@
-package main
+package utils
 
 import (
 	"log"
 	"time"
 )
 
-var logger *log.Logger
-
-const LAYOUT_YYYYMMDD = "20060102"
+var Logger *log.Logger
 
 // for logger
-func danger(args ...interface{}) {
-	logger.SetPrefix("ERROR ")
-	logger.Println(args...)
+func Warning(args ...interface{}) {
+	Logger.SetPrefix("WARNING ")
+	Logger.Println(args...)
 }
 
-func warning(args ...interface{}) {
-	logger.SetPrefix("WARNING ")
-	logger.Println(args...)
+func Danger(args ...interface{}) {
+	Logger.SetPrefix("WARNING ")
+	Logger.Println(args...)
 }
 
-func getBeginningOfMonth() string {
+func GetBeginningOfMonth() string {
 	now := time.Now()
 	t := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, time.Local)
 	return t.Format(LAYOUT_YYYYMMDD)
 }
 
-func getEndOfMonth() string {
+func GetEndOfMonth() string {
 	now := time.Now()
 	t := time.Date(now.Year(), now.Month()+1, 1, 0, 0, 0, 0, time.Local)
 	t.Add(-time.Minute)

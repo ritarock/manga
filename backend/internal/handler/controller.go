@@ -1,43 +1,15 @@
-package main
+package handler
 
 import (
 	"encoding/json"
+	"mangar/backend/internal/data"
+	"mangar/backend/internal/utils"
 	"net/http"
 	"net/url"
 	"strings"
 )
 
-const BASE_URL = "https://api.openbd.jp/v1"
-
-type OpenBD []struct {
-	Onix struct {
-		DescriptiveDetail struct {
-			Subject []struct {
-				SubjectCode string `json:"SubjectCode"`
-			} `json:"Subject"`
-		} `json:"DescriptiveDetail"`
-	} `json:"Onix"`
-	Summary struct {
-		Isbn      string `json:"isbn"`
-		Title     string `json:"title"`
-		Publisher string `json:"publisher"`
-		Pubdate   string `json:"pubdate"`
-		Cover     string `json:"cover"`
-		Author    string `json:"author"`
-	} `json:"Summary"`
-}
-
-type Book struct {
-	Isbn        string `db:"isbn" json:"isbn"`
-	Title       string `db:"title" json:"title"`
-	Publisher   string `db:"publisher" json:"publisher"`
-	Pubdate     string `db:"pubdate" json:"pubdate"`
-	Cover       string `db:"cover" json:"cover"`
-	Author      string `db:"author" json:"author"`
-	SubjectCode string `db:"subject_code" json:"SubjectCode"`
-}
-
-func serviceRunner() {
+func initializeData() {
 	coverage := getCoverage()
 	isbnList := func(coverage []string) [][]string {
 		result := [][]string{}
@@ -54,7 +26,7 @@ func serviceRunner() {
 
 	for _, isbn := range isbnList {
 		books := getBook(isbn)
-		insertBook(books)
+		data.InsertBook(books)
 	}
 }
 
@@ -63,32 +35,32 @@ func getCoverage() []string {
 	url := BASE_URL + "/coverage"
 	response, err := http.Get(url)
 	if err != nil {
-		danger(err, "Cannot GET /coverage")
+		utils.Danger(err, "Cannot GET /coverage")
 	}
 	defer response.Body.Close()
 
 	if err := json.NewDecoder(response.Body).Decode(&coverage); err != nil {
-		danger(err, "Cannot decode coverage")
+		utils.Danger(err, "Cannot decode coverage")
 	}
 
 	return coverage
 }
 
-func getBook(coverage []string) []Book {
+func getBook(coverage []string) []data.Book {
 	var openbd OpenBD
-	var books []Book
+	var books []data.Book
 	isbn := strings.Join(coverage, ",")
 	path := BASE_URL + "/get"
 	params := url.Values{}
 	params.Add("isbn", isbn)
 	response, err := http.PostForm(path, params)
 	if err != nil {
-		danger(err, "Cannot POST /get")
+		utils.Danger(err, "Cannot POST /get")
 	}
 	defer response.Body.Close()
 
 	if err := json.NewDecoder(response.Body).Decode(&openbd); err != nil {
-		danger(err, "Cannot decode isbn")
+		utils.Danger(err, "Cannot decode isbn")
 	}
 
 	for _, v := range openbd {
@@ -103,7 +75,7 @@ func getBook(coverage []string) []Book {
 			continue
 		}
 
-		book := Book{
+		book := data.Book{
 			Isbn:        v.Summary.Isbn,
 			Title:       v.Summary.Title,
 			Publisher:   v.Summary.Publisher,

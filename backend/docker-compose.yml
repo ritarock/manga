@@ -15,7 +15,7 @@ services:
     volumes:
       - ./database/mysql:/var/lib/mysql
       - ./database/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./database/initdb.d:/docker-entry-point-initdb.d
+      - ./database/initdb.d:/docker-entrypoint-initdb.d
   app:
     build:
       context: .
@@ -27,4 +27,4 @@ services:
       - 8080:8080
     depends_on:
       - db
-    command: go run main.go service.go utils.go data.go router.go
+    command: go run cmd/mangar/main.go
