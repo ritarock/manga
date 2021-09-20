@@ -3,12 +3,13 @@ package handler
 import (
 	"encoding/json"
 	"io"
+	"mangar/backend/internal/controller"
 	"mangar/backend/internal/data"
 	"net/http"
 )
 
 func Batch(w http.ResponseWriter, _ *http.Request) {
-	initializeData()
+	controller.InitializeData()
 	io.WriteString(w, "done")
 }
 

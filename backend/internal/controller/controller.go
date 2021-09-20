@@ -1,4 +1,4 @@
-package handler
+package controller
 
 import (
 	"encoding/json"
@@ -9,8 +9,8 @@ import (
 	"strings"
 )
 
-func initializeData() {
-	coverage := getCoverage()
+func InitializeData() {
+	coverage := GetCoverage()
 	isbnList := func(coverage []string) [][]string {
 		result := [][]string{}
 		sliceSize := len(coverage)
@@ -25,12 +25,12 @@ func initializeData() {
 	}(coverage)
 
 	for _, isbn := range isbnList {
-		books := getBook(isbn)
+		books := GetBook(isbn)
 		data.InsertBook(books)
 	}
 }
 
-func getCoverage() []string {
+func GetCoverage() []string {
 	var coverage []string
 	url := BASE_URL + "/coverage"
 	response, err := http.Get(url)
@@ -46,7 +46,7 @@ func getCoverage() []string {
 	return coverage
 }
 
-func getBook(coverage []string) []data.Book {
+func GetBook(coverage []string) []data.Book {
 	var openbd OpenBD
 	var books []data.Book
 	isbn := strings.Join(coverage, ",")

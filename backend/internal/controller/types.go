@@ -1,4 +1,4 @@
-package handler
+package controller
 
 type OpenBD []struct {
 	Onix struct {
