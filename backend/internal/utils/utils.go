@@ -27,6 +27,6 @@ func GetBeginningOfMonth() string {
 func GetEndOfMonth() string {
 	now := time.Now()
 	t := time.Date(now.Year(), now.Month()+1, 1, 0, 0, 0, 0, time.Local)
-	t.Add(-time.Minute)
+	t = t.Add(-time.Minute)
 	return t.Format(LAYOUT_YYYYMMDD)
 }
