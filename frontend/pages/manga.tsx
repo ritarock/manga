@@ -1,4 +1,5 @@
 import { GetStaticProps } from 'next'
+import Viewer from '../components/Viewer'
 
 type Book = {
 	isbn: string
@@ -18,9 +19,10 @@ export default function Manga({
     data: Book[]
   }
 }) {
-  const covers = books.data.map(book => book.cover)
   return (
-    <div></div>
+    <>
+    <Viewer booksData={books.data} />
+    </>
   )
 }
 
