@@ -1,4 +1,4 @@
-package handler
+package server
 
 import (
 	"encoding/json"
@@ -8,12 +8,12 @@ import (
 	"net/http"
 )
 
-func Batch(w http.ResponseWriter, _ *http.Request) {
+func batch(w http.ResponseWriter, _ *http.Request) {
 	controller.InitializeData()
 	io.WriteString(w, "done")
 }
 
-func Index(w http.ResponseWriter, r *http.Request) {
+func index(w http.ResponseWriter, r *http.Request) {
 	books := data.GetBooks()
 	var response struct {
 		Code int         `json:"code"`
