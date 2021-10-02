@@ -27,3 +27,10 @@ func GetBooks() []Book {
 
 	return books
 }
+
+func DeleteBooks() {
+	db := ConnectDb()
+	defer db.Close()
+
+	db.MustExec(`DELETE FROM books`)
+}
