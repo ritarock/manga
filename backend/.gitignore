@@ -1,2 +1,2 @@
 *.log
-database/mysql
+docker/database/mysql
