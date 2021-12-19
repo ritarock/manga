@@ -1,8 +1,12 @@
+import Link from "next/link";
+
 export default function HomePage() {
   return (
     <>
       <div>
-        welcome
+        <Link href="/manga">
+          <a>home</a>
+        </Link>
       </div>
     </>
   )

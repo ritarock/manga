@@ -1,7 +1,6 @@
 package server
 
 import (
-	"fmt"
 	"mangar/backend/internal/data"
 	"mangar/backend/internal/data/types"
 	"net/http"
@@ -20,7 +19,6 @@ func Start() {
 
 func index(c echo.Context) error {
 	books := data.GetBooks()
-	fmt.Println(books)
 	var response struct {
 		Code int          `json:"code"`
 		Data []types.Book `json:"data"`

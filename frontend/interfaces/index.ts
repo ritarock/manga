@@ -1,9 +1,9 @@
 export interface BookData {
-  Isbn: string
-  Title: string
-  Publisher: string
-  Pubdate: string
-  Cover: string
-  Author: string
-  SubjectCode: string
+  isbn: string
+  title: string
+  publisher: string
+  pubdate: string
+  cover: string
+  author: string
+  subject_code: string
 }

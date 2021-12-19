@@ -4,10 +4,10 @@ export default function Viewer({booksData}: {booksData: BookData[]}) {
   return (
     <>
       <div className='box-row'>
-        {booksData.map(({Isbn, Title, Cover}) => (
-          <div key={Isbn}>
+        {booksData.map(({isbn, title, cover}) => (
+          <div key={isbn}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={Cover} alt={Title} width="" height=""></img>
+            <img src={cover} alt={title} width="" height=""></img>
           </div>
         ))}
       </div>

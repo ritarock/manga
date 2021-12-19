@@ -4,16 +4,15 @@
 ## backend
 REST API
 - Golang
+- Echo
 - sqlx
 ```bash
 $ docker-compose up
 ```
 
 ## frontend
-- Next.js
 - TypeScript
+- Next.js
 ```
 $ yarn dev
 ```
-
-[top page](http://localhost/manga)
