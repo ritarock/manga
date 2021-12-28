@@ -26,14 +26,14 @@ func InsertBooks(books []types.Book) {
 	}
 }
 
-func GetBooks() []types.Book {
+func GetBooks(date string) []types.Book {
 	db := connectDb()
 	defer db.Close()
 
 	books := []types.Book{}
 	err := db.Select(&books,
-		`SELECT * FROM books WHERE ? < pubdate AND pubdate <?`,
-		util.GetBeginningOfMonth(), util.GetEndOfMonth())
+		`SELECT * FROM books WHERE ? < pubdate AND pubdate <? AND cover IS NOT NULL`,
+		util.GetBeginningOfMonth(date), util.GetEndOfMonth(date))
 	if err != nil {
 		fmt.Println(err, "Cannot get data")
 	}
@@ -46,4 +46,18 @@ func DeleteBooks() {
 	defer db.Close()
 
 	db.MustExec(`DELETE FROM books`)
+}
+
+func SearchTitle(titleName string) []types.Book {
+	db := connectDb()
+	defer db.Close()
+
+	books := []types.Book{}
+	query := "SELECT * FROM books WHERE title LIKE '%" + titleName + "%'"
+	err := db.Select(&books, query)
+	if err != nil {
+		fmt.Println(err, "Not found")
+	}
+
+	return books
 }

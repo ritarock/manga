@@ -2,13 +2,11 @@ package util
 
 import (
 	"testing"
-	"time"
 )
 
 func TestGetBeginningOfMonth(t *testing.T) {
-	timeNow = time.Date(2021, 1, 10, 0, 0, 0, 0, time.Local)
-	got := GetBeginningOfMonth()
-	want := "20210101"
+	got := GetBeginningOfMonth("202112")
+	want := "20211201"
 
 	if got != want {
 		t.Errorf("got %v, want %v", got, want)
@@ -16,11 +14,21 @@ func TestGetBeginningOfMonth(t *testing.T) {
 }
 
 func TestGetEndOfMonth(t *testing.T) {
-	timeNow = time.Date(2021, 1, 10, 0, 0, 0, 0, time.Local)
-	got := GetEndOfMonth()
-	want := "20210131"
+	got := GetEndOfMonth("202112")
+	want := "20211231"
 
 	if got != want {
 		t.Errorf("got %v, want %v", got, want)
+	}
+}
+
+func Test_formatDate(t *testing.T) {
+	gotYear, gotMonth := formatDate("202112")
+	wantYear, wantMonth := 2021, 12
+	if gotYear != wantYear {
+		t.Errorf("gotYear %v, wantYear %v", gotYear, wantYear)
+	}
+	if gotMonth != wantMonth {
+		t.Errorf("gotMonth %v, wantMonth %v", gotMonth, wantMonth)
 	}
 }

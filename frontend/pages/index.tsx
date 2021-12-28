@@ -1,12 +1,11 @@
 import Link from "next/link";
+import ReleaseList from "../components/releaseDate";
 
 export default function HomePage() {
   return (
     <>
       <div>
-        <Link href="/manga">
-          <a>home</a>
-        </Link>
+        <ReleaseList />
       </div>
     </>
   )
