@@ -25,6 +25,7 @@ $ manga view
 ```
 
 You can specify a query path. Default is the date of execution.
+
 ex) `http://localhost:8080/manga?yyyy=2022&mm=1`
 
 ## develop
