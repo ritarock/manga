@@ -1,4 +1,5 @@
 # manga
+![](https://raw.githubusercontent.com/ritarock/manga/main/etc/manga.png)
 
 ## Usage
 ### install
