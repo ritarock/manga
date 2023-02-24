@@ -8,20 +8,47 @@ import (
 	"context"
 	"strconv"
 
+	"entgo.io/ent/dialect/sql"
+	"github.com/ritarock/manga/ent/book"
 	"github.com/ritarock/manga/graph/model"
 )
 
-// Books is the resolver for the books field.
-func (r *queryResolver) Books(ctx context.Context) ([]*model.Book, error) {
+// BooksByTitle is the resolver for the booksByTitle field.
+func (r *queryResolver) BooksByTitle(ctx context.Context, input string) ([]*model.Book, error) {
 	books := []*model.Book{}
-	searched, _ := r.EntClient.Book.Query().Limit(100).All(ctx)
+	searched := r.EntClient.Book.Query().
+		Where(func(s *sql.Selector) {
+			s.Where(sql.Like(book.FieldTitle, "%"+input+"%"))
+		}).AllX(ctx)
 	for _, book := range searched {
 		books = append(books, &model.Book{
 			ID:          strconv.Itoa(book.ID),
-			Isbn:        book.Title,
+			Isbn:        book.Isbn,
 			Title:       book.Title,
 			Publisher:   book.Publisher,
-			Pubdate:     book.Publisher,
+			Pubdate:     book.Pubdate,
+			Cover:       book.Cover,
+			Author:      book.Author,
+			SubjectCode: book.SubjectCode,
+		})
+	}
+	return books, nil
+}
+
+// BooksByAuthor is the resolver for the booksByAuthor field.
+func (r *queryResolver) BooksByAuthor(ctx context.Context, input string) ([]*model.Book, error) {
+	books := []*model.Book{}
+	searched := r.EntClient.Book.Query().
+		Where(func(s *sql.Selector) {
+			s.Where(sql.Like(book.FieldAuthor, "%"+input+"%"))
+		}).AllX(ctx)
+	for _, book := range searched {
+		books = append(books, &model.Book{
+			ID:          strconv.Itoa(book.ID),
+			Isbn:        book.Isbn,
+			Title:       book.Title,
+			Publisher:   book.Publisher,
+			Pubdate:     book.Pubdate,
 			Cover:       book.Cover,
 			Author:      book.Author,
 			SubjectCode: book.SubjectCode,

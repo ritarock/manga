@@ -25,7 +25,8 @@ http://localhost:8080/playground
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("%s", `Start Server: http://localhost:8080/manga
-GraphQL playground: http://localhost:8080/playground`)
+GraphQL playground: http://localhost:8080/playground
+`)
 		viewer.Run()
 	},
 }
