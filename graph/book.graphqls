@@ -1,0 +1,10 @@
+type Book implements Node {
+    id: ID!
+    isbn: String!
+    title: String!
+    publisher: String!
+    pubdate: String!
+    cover: String!
+    author: String!
+    subject_code: String!
+}

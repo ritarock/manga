@@ -9,8 +9,11 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/ritarock/manga/ent"
 	"github.com/ritarock/manga/ent/book"
+	"github.com/ritarock/manga/graph"
 	"github.com/ritarock/manga/internal/db"
 )
 
@@ -25,6 +28,18 @@ func Run() {
 	server := http.Server{
 		Addr: "0.0.0.0:8080",
 	}
+
+	client, _ := db.Connection()
+	srv := handler.NewDefaultServer(
+		graph.NewExecutableSchema(
+			graph.Config{Resolvers: &graph.Resolver{
+				EntClient: client,
+			},
+			},
+		),
+	)
+	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	http.Handle("/query", srv)
 	http.HandleFunc("/manga", index)
 	server.ListenAndServe()
 }
