@@ -2,6 +2,9 @@
 
 BINDIR=bin
 
+gqlgen:
+	go run github.com/99designs/gqlgen
+
 build:
 	go build -o $(BINDIR)/manga .
 
