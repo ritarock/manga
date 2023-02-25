@@ -12,3 +12,14 @@ type Book implements Node {
     author: String!
     subject_code: String!
 }
+
+type BookConnection implements Connection {
+    pageInfo: PageInfo!
+    edges: [BookEdge!]!
+    nodes: [Book!]!
+}
+
+type BookEdge implements Edge {
+    cursor: String!
+    node: Book!
+}

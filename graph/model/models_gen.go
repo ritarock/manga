@@ -2,6 +2,19 @@
 
 package model
 
+type Connection interface {
+	IsConnection()
+	GetPageInfo() *PageInfo
+	GetEdges() []Edge
+	GetNodes() []Node
+}
+
+type Edge interface {
+	IsEdge()
+	GetCursor() string
+	GetNode() Node
+}
+
 type Node interface {
 	IsNode()
 	GetID() string
@@ -20,3 +33,55 @@ type Book struct {
 
 func (Book) IsNode()            {}
 func (this Book) GetID() string { return this.ID }
+
+type BookConnection struct {
+	PageInfo *PageInfo   `json:"pageInfo"`
+	Edges    []*BookEdge `json:"edges"`
+	Nodes    []*Book     `json:"nodes"`
+}
+
+func (BookConnection) IsConnection()               {}
+func (this BookConnection) GetPageInfo() *PageInfo { return this.PageInfo }
+func (this BookConnection) GetEdges() []Edge {
+	if this.Edges == nil {
+		return nil
+	}
+	interfaceSlice := make([]Edge, 0, len(this.Edges))
+	for _, concrete := range this.Edges {
+		interfaceSlice = append(interfaceSlice, concrete)
+	}
+	return interfaceSlice
+}
+func (this BookConnection) GetNodes() []Node {
+	if this.Nodes == nil {
+		return nil
+	}
+	interfaceSlice := make([]Node, 0, len(this.Nodes))
+	for _, concrete := range this.Nodes {
+		interfaceSlice = append(interfaceSlice, concrete)
+	}
+	return interfaceSlice
+}
+
+type BookEdge struct {
+	Cursor string `json:"cursor"`
+	Node   *Book  `json:"node"`
+}
+
+func (BookEdge) IsEdge()                {}
+func (this BookEdge) GetCursor() string { return this.Cursor }
+func (this BookEdge) GetNode() Node     { return *this.Node }
+
+type PageInfo struct {
+	StartCursor     *string `json:"startCursor"`
+	EndCursor       *string `json:"endCursor"`
+	HasNextPage     bool    `json:"hasNextPage"`
+	HasPreviousPage bool    `json:"hasPreviousPage"`
+}
+
+type PaginationInput struct {
+	First  *int    `json:"first"`
+	After  *string `json:"after"`
+	Last   *int    `json:"last"`
+	Before *string `json:"before"`
+}

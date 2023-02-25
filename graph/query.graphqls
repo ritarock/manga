@@ -1,4 +1,5 @@
 type Query {
     booksByTitle(input: String!): [Book!]!
     booksByAuthor(input: String!): [Book!]!
+    books(input: PaginationInput!): BookConnection!
 }
