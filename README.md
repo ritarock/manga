@@ -28,15 +28,9 @@ You can specify a query path. Default is the month of execution.
 
 ex) http://localhost:8080/manga?yyyy=2022&mm=1
 
-You can also use GraphQL playground.
-
-http://localhost:8080/playground
-
 ## develop
 - Golang
 - CLI
     - cobra
 - ORM
     - ent
-- GraphQL
-    - gqlgen
