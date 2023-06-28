@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-func Test_makeIsbnList(t *testing.T) {
+func TestMakeIsbnList(t *testing.T) {
 	t.Run("success", func(t *testing.T) {
 		coverage := []string{
 			"1",
@@ -19,7 +19,7 @@ func Test_makeIsbnList(t *testing.T) {
 			"9",
 			"10",
 		}
-		got := makeIsbnList(coverage)
+		got := MakeIsbnList(coverage)
 		want := [][]string{coverage}
 		if !reflect.DeepEqual(got, want) {
 			t.Errorf("got %v, want %v", got, want)
@@ -27,7 +27,7 @@ func Test_makeIsbnList(t *testing.T) {
 	})
 	t.Run("10000 elements in one array", func(t *testing.T) {
 		coverage := make([]string, 10001)
-		isbn := makeIsbnList(coverage)
+		isbn := MakeIsbnList(coverage)
 		got := len(isbn[0])
 		want := 10000
 		if got != want {

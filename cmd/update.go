@@ -1,14 +1,13 @@
-/*
-Copyright © 2023 NAME HERE <EMAIL ADDRESS>
-*/
 package cmd
 
 import (
+	"context"
+
 	"github.com/ritarock/manga/internal/crawler"
+	"github.com/ritarock/manga/internal/db"
 	"github.com/spf13/cobra"
 )
 
-// updateCmd represents the update command
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "update manga data",
@@ -16,9 +15,27 @@ var updateCmd = &cobra.Command{
 This subcommand must be executed first.
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if err := crawler.Run(); err != nil {
-			return nil
+		db.InitDb()
+		client, err := db.Connection()
+		if err != nil {
+			return err
 		}
+		defer client.Close()
+
+		ctx := context.Background()
+		client.Book.Delete().Exec(ctx)
+
+		coverages := crawler.GetCoverages()
+		isbnList := crawler.MakeIsbnList(coverages)
+		for _, isbn := range isbnList {
+			books := crawler.GetBooks(isbn)
+			for _, book := range books {
+				if err := db.Store(ctx, client, book); err != nil {
+					return err
+				}
+			}
+		}
+
 		return nil
 	},
 }

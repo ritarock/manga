@@ -1,95 +1,18 @@
 package crawler
 
 import (
-	"context"
 	"encoding/json"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
 
-	"github.com/avast/retry-go"
-	"github.com/ritarock/manga/ent"
-	"github.com/ritarock/manga/internal/db"
+	"github.com/ritarock/manga/internal/types"
 )
-
-type OpenBD []struct {
-	Onix struct {
-		DescriptiveDetail struct {
-			Subject []struct {
-				SubjectCode string `json:"SubjectCode"`
-			}
-		} `json:"DescriptiveDetail"`
-	} `json:"onix"`
-	Summary struct {
-		Isbn      string `json:"isbn"`
-		Title     string `json:"title"`
-		Publisher string `json:"publisher"`
-		Pubdate   string `json:"pubdate"`
-		Cover     string `json:"cover"`
-		Author    string `json:"author"`
-	} `json:"summary"`
-}
-
-type Book struct {
-	Isbn        string `json:"isbn"`
-	Title       string `json:"title"`
-	Publisher   string `json:"publisher"`
-	Pubdate     string `json:"pubdate"`
-	Cover       string `json:"cover"`
-	Author      string `json:"author"`
-	SubjectCode string `json:"SubjectCode"`
-}
 
 const BASE_URL = "https://api.openbd.jp/v1"
 
-func Run() error {
-	db.InitDb()
-	client, err := db.Connection()
-	if err != nil {
-		return err
-	}
-	defer client.Close()
-
-	if err := initializeData(client); err != nil {
-		return err
-	}
-	return nil
-}
-
-func initializeData(client *ent.Client) error {
-	ctx := context.Background()
-	client.Book.Delete().Exec(ctx)
-	coverage := getCoverage()
-	isbnList := makeIsbnList(coverage)
-
-	for _, isbn := range isbnList {
-		books := getBooks(isbn)
-		for _, book := range books {
-			retry.Do(
-				func() error {
-					_, err := client.Book.Create().
-						SetIsbn(book.Isbn).
-						SetTitle(book.Title).
-						SetPublisher(book.Publisher).
-						SetPubdate(book.Pubdate).
-						SetCover(book.Cover).
-						SetAuthor(book.Author).
-						SetSubjectCode(book.SubjectCode).
-						Save(ctx)
-					if err != nil {
-						return err
-					}
-					return nil
-				},
-			)
-
-		}
-	}
-	return nil
-}
-
-func getCoverage() []string {
+func GetCoverages() []string {
 	var coverage []string
 	path := BASE_URL + "/coverage"
 	response, err := http.Get(path)
@@ -104,7 +27,7 @@ func getCoverage() []string {
 	return coverage
 }
 
-func makeIsbnList(coverage []string) [][]string {
+func MakeIsbnList(coverage []string) [][]string {
 	isbnList := [][]string{}
 	sliceSize := len(coverage)
 	for start := 0; start < sliceSize; start += 10000 {
@@ -117,7 +40,7 @@ func makeIsbnList(coverage []string) [][]string {
 	return isbnList
 }
 
-func getBooks(coverage []string) []Book {
+func GetBooks(coverage []string) []types.Book {
 	isbn := strings.Join(coverage, ",")
 	params := url.Values{}
 	params.Add("isbn", isbn)
@@ -127,12 +50,12 @@ func getBooks(coverage []string) []Book {
 	}
 	defer response.Body.Close()
 
-	var openbd OpenBD
+	var openbd types.OpenBD
 	if err := json.NewDecoder(response.Body).Decode(&openbd); err != nil {
 		log.Fatal(err, "Cannot decode openbd")
 	}
 
-	var books []Book
+	var books []types.Book
 	for _, v := range openbd {
 		if len(v.Onix.DescriptiveDetail.Subject) == 0 {
 			continue
@@ -146,7 +69,7 @@ func getBooks(coverage []string) []Book {
 		if category[2:4] != "79" {
 			continue
 		}
-		book := Book{
+		book := types.Book{
 			Isbn:        v.Summary.Isbn,
 			Title:       v.Summary.Title,
 			Publisher:   v.Summary.Publisher,

@@ -5,6 +5,7 @@ import (
 
 	"github.com/avast/retry-go"
 	"github.com/ritarock/manga/ent"
+	"github.com/ritarock/manga/internal/types"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -41,4 +42,25 @@ func InitDb() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func Store(ctx context.Context, client *ent.Client, book types.Book) error {
+	retry.Do(
+		func() error {
+			_, err := client.Book.Create().
+				SetIsbn(book.Isbn).
+				SetTitle(book.Title).
+				SetPublisher(book.Publisher).
+				SetPubdate(book.Pubdate).
+				SetCover(book.Cover).
+				SetAuthor(book.Author).
+				SetSubjectCode(book.SubjectCode).
+				Save(ctx)
+			if err != nil {
+				return err
+			}
+			return nil
+		},
+	)
+	return nil
 }
