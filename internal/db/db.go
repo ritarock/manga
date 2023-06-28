@@ -3,8 +3,10 @@ package db
 import (
 	"context"
 
+	"entgo.io/ent/dialect/sql"
 	"github.com/avast/retry-go"
 	"github.com/ritarock/manga/ent"
+	"github.com/ritarock/manga/ent/book"
 	"github.com/ritarock/manga/internal/types"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -63,4 +65,25 @@ func Store(ctx context.Context, client *ent.Client, book types.Book) error {
 		},
 	)
 	return nil
+}
+
+func GetByDate(ctx context.Context, client *ent.Client, yyyy, mm string) ([]*ent.Book, error) {
+	// SELECT Cover, Title
+	// FROM books
+	// WHERE (Pubdate LIKE "YYYYMM%" AND Cover != "")
+	// ORDER BY Pubdate DESC;
+	books, err := client.Book.Query().
+		Select(book.FieldCover, book.FieldTitle).
+		Where(
+			func(s *sql.Selector) {
+				s.Where(sql.Like(book.FieldPubdate, yyyy+mm+"%"))
+			},
+			book.Not(book.CoverEQ("")),
+		).
+		Order(ent.Desc(book.FieldPubdate)).
+		All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return books, nil
 }
