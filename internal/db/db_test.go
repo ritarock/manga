@@ -41,3 +41,56 @@ func TestStore(t *testing.T) {
 		t.Errorf("got: %v, want: %v", got, book)
 	}
 }
+
+func TestGetByDate(t *testing.T) {
+	client := enttest.Open(t, "sqlite3", "file:ent?mode=memory&_fk=1")
+	defer client.Close()
+
+	books := []types.Book{
+		{
+			Isbn:        "1",
+			Title:       "title1",
+			Publisher:   "publisher1",
+			Pubdate:     "20230121",
+			Cover:       "cover1",
+			Author:      "author1",
+			SubjectCode: "1",
+		},
+		{
+			Isbn:        "2",
+			Title:       "title2",
+			Publisher:   "publisher2",
+			Pubdate:     "20230120",
+			Cover:       "cover2",
+			Author:      "author2",
+			SubjectCode: "2",
+		},
+	}
+	ctx := context.Background()
+
+	for _, book := range books {
+		Store(ctx, client, book)
+	}
+
+	gotBooks, _ := GetByDate(ctx, client, "2023", "01")
+	got := []types.Book{
+		{
+			Title: gotBooks[0].Title,
+			Cover: gotBooks[0].Cover,
+		},
+		{
+			Title: gotBooks[1].Title,
+			Cover: gotBooks[1].Cover,
+		},
+	}
+
+	for i, book := range books {
+		want := types.Book{
+			Title: book.Title,
+			Cover: book.Cover,
+		}
+		if !reflect.DeepEqual(got[i], want) {
+			t.Errorf("got: %v, want: %v", got, want)
+		}
+	}
+}
