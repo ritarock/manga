@@ -61,7 +61,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 			Title: book.Title,
 		})
 	}
-	tmpl, err := template.ParseFiles(viewer.ViewTemplatePath)
+	tmpl, err := template.ParseFiles("view/tmpl.html")
 	if err != nil {
 		panic(err)
 	}

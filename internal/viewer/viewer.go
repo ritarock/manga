@@ -10,8 +10,6 @@ type ViewTemplate struct {
 	Title string
 }
 
-const ViewTemplatePath = "view/tmpl.html"
-
 func ValidateYyyy(yyyy string) string {
 	i, err := strconv.Atoi(yyyy)
 	if err != nil {
